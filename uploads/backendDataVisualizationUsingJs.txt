@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Slot Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Example of a visualization library -->
+</head>
+<body>
+    <h1>Parking Slot Visualization</h1>
+
+    <!-- Create a table to display parking records -->
+    <table id="parkingTable">
+        <thead>
+            <tr>
+                <th>Vehicle Reg. No.</th>
+                <th>Company</th>
+                <th>Parking Slot</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in parking_records %}
+            <tr>
+                <td>{{ record.vehicle_reg_no }}</td>
+                <td>{{ record.company }}</td>
+                <td>{{ record.parking_slot }}</td>
+                <td>{{ record.amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Chart.js example visualization -->
+    <canvas id="myChart" width="400" height="200"></canvas>
+    
+    <script>
+        // Pass backend data to JavaScript
+        const parkingRecords = [
+            {% for record in parking_records %}
+            {
+                vehicleRegNo: "{{ record.vehicle_reg_no }}",
+                company: "{{ record.company }}",
+                parkingSlot: "{{ record.parking_slot }}",
+                amount: {{ record.amount }}
+            },
+            {% endfor %}
+        ];
+
+        // Example of visualizing total income from parking in a bar chart
+        const labels = parkingRecords.map(record => record.vehicleRegNo);
+        const data = parkingRecords.map(record => record.amount);
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Parking Fee Amounts',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
